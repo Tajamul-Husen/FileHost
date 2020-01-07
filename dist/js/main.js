@@ -9,16 +9,17 @@ let scroll = new SmoothScroll('a[href*="#"]', {
   clip: false,
   header: "#my-header",
   topOnEmptyHash: false,
-  offset: function() {
+  offset: function(anchor, toggle) {
     let size = window.innerWidth < 1000 ? -305 : 0;
-    window.addEventListener("resize", function() {
-      return size;
-    });
+    if (window.innerWidth < 1000) {
+      if (toggle.classList.contains("navbar-link")) return size;
+      else return 0;
+    }
     return size;
   }
 });
 
-//gumshoe
+//gumshoe scrollpy
 let spy = new Gumshoe("#my-awesome-nav a", {
   offset: function() {
     return header.getBoundingClientRect().height;
@@ -46,9 +47,9 @@ $(".owl-carousel").owlCarousel({
 // animate on scroll
 AOS.init({
   startEvent: "DOMContentLoaded", //when domcontentloaded
-  offset: 120, // offset (in px) from the original trigger point
+  offset: 100, // offset (in px) from the original trigger point
   delay: 0, // values from 0 to 3000, with step 50ms
-  duration: 400, // values from 0 to 3000, with step 50ms
+  duration: 300, // values from 0 to 3000, with step 50ms
   easing: "ease-in-out", // default easing for AOS animations
   once: true, // whether animation should happen only once - while scrolling down
   anchorPlacement: "top-top"
@@ -68,44 +69,19 @@ window.onscroll = () => {
     nav.classList.add("fixed-header");
     nav.classList.add("nav-animate");
     nav.classList.add("nav-shadow");
-    if (window.innerWidth > 1000) {
-      nav.style.marginTop = "0";
-    }
-    nav.style.marginTop = "0";
   } else {
     nav.classList.remove("fixed-header");
     nav.classList.remove("nav-animate");
     nav.classList.remove("nav-shadow");
-    if (window.innerWidth > 1000) {
-      nav.style.marginTop = "1.5em";
-    }
   }
 };
 
-//nav screensize fix
-window.addEventListener("resize", function() {
-  if (window.innerWidth > 1000 && document.documentElement.scrollTop == 0) {
-    nav.style.marginTop = "1.5em";
-  } else {
-    nav.style.marginTop = "0";
-  }
-});
-
-//navbar collapse fix on resize
-window.addEventListener("resize", () => {
-  if (navbar.classList.contains("active")) {
-    if (window.innerWidth > 1000) {
-      navbar.classList.remove("active");
-    }
-  }
-});
-
 // navbar fixed on refresh
 window.onload = () => {
-  if (document.documentElement.scrollTop != 0) {
+  if (document.documentElement.scrollTop !== 0) {
     nav.classList.add("fixed-header");
     nav.classList.add("nav-animate");
-    nav.style.marginTop = "0";
+    nav.classList.add("nav-shadow");
   }
 };
 
@@ -117,8 +93,11 @@ document.onreadystatechange = function() {
     loaderComplete();
   }
 };
+
 function loaderComplete() {
   if (loadingComplete) {
     document.querySelector(".preloader").classList.add("loader-hider");
   }
 }
+
+
